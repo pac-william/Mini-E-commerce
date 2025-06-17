@@ -3,47 +3,74 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Button,
-  Badge,
   IconButton,
+  Badge,
   Box,
+  Button,
+  Container,
 } from '@mui/material';
-import { ShoppingCart } from '@mui/icons-material';
+import { ShoppingCart, Home } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { items } = useCart();
-
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <AppBar position="sticky">
-      <Toolbar>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, cursor: 'pointer' }}
-          onClick={() => navigate('/')}
-        >
-          ReactShop
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button color="inherit" onClick={() => navigate('/')}>
-            Produtos
-          </Button>
-          <IconButton
-            color="inherit"
-            onClick={() => navigate('/carrinho')}
-            sx={{ ml: 1 }}
+    <AppBar 
+      position="sticky" 
+      color="default" 
+      elevation={0}
+      sx={{ 
+        backgroundColor: 'background.paper',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              fontWeight: 700,
+              color: 'primary.main',
+              cursor: 'pointer',
+            }}
+            onClick={() => navigate('/')}
           >
-            <Badge badgeContent={totalItems} color="error">
-              <ShoppingCart />
-            </Badge>
-          </IconButton>
-        </Box>
-      </Toolbar>
+            Mini Store
+          </Typography>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              startIcon={<Home />}
+              onClick={() => navigate('/')}
+              sx={{ color: 'text.primary' }}
+            >
+              Início
+            </Button>
+            <IconButton
+              color="primary"
+              onClick={() => navigate('/cart')}
+              sx={{
+                backgroundColor: 'primary.light',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                },
+              }}
+            >
+              <Badge badgeContent={itemCount} color="error">
+                <ShoppingCart />
+              </Badge>
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 }; 

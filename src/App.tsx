@@ -17,8 +17,8 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<ProductList />} />
-            <Route path="/produto/:id" element={<ProductDetails />} />
-            <Route path="/carrinho" element={<Cart />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </BrowserRouter>
       </CartProvider>

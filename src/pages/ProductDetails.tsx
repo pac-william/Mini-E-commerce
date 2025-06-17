@@ -3,14 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
-  Button,
   Box,
-  Rating,
+  Button,
   CircularProgress,
+  Rating,
+  Chip,
+  Divider,
   Paper,
 } from '@mui/material';
+import { ShoppingCart, ArrowBack } from '@mui/icons-material';
+import { Product, CartItem } from '../types/product';
 import { getProduct } from '../services/api';
-import { Product } from '../types/product';
 import { useCart } from '../contexts/CartContext';
 
 export const ProductDetails: React.FC = () => {
@@ -22,11 +25,11 @@ export const ProductDetails: React.FC = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
-      
       try {
-        const data = await getProduct(parseInt(id));
-        setProduct(data);
+        if (id) {
+          const data = await getProduct(parseInt(id));
+          setProduct(data);
+        }
       } catch (error) {
         console.error('Erro ao carregar produto:', error);
       } finally {
@@ -39,7 +42,11 @@ export const ProductDetails: React.FC = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart({ ...product, quantity: 1 });
+      const cartItem: CartItem = {
+        ...product,
+        quantity: 1
+      };
+      addToCart(cartItem);
     }
   };
 
@@ -53,11 +60,15 @@ export const ProductDetails: React.FC = () => {
 
   if (!product) {
     return (
-      <Container>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography variant="h5" color="error">
           Produto não encontrado
         </Typography>
-        <Button onClick={() => navigate('/')} sx={{ mt: 2 }}>
+        <Button
+          startIcon={<ArrowBack />}
+          onClick={() => navigate('/')}
+          sx={{ mt: 2 }}
+        >
           Voltar para a lista
         </Button>
       </Container>
@@ -66,58 +77,113 @@ export const ProductDetails: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Button onClick={() => navigate('/')} sx={{ mb: 4 }}>
-        ← Voltar para a lista
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => navigate('/')}
+        sx={{ mb: 4 }}
+      >
+        Voltar
       </Button>
 
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper 
+        elevation={0}
+        sx={{ 
+          p: 4,
+          borderRadius: 4,
+          backgroundColor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
         <Box sx={{ 
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           gap: 4
         }}>
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ 
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#f8fafc',
+            borderRadius: 2,
+            p: 4,
+          }}>
             <Box
               component="img"
               src={product.image}
               alt={product.title}
               sx={{
-                width: '100%',
-                height: 'auto',
+                maxWidth: '100%',
                 maxHeight: 400,
                 objectFit: 'contain',
               }}
             />
           </Box>
+
           <Box sx={{ flex: 1 }}>
             <Typography variant="h4" component="h1" gutterBottom>
               {product.title}
             </Typography>
-            
-            <Typography variant="h5" color="primary" gutterBottom>
-              R$ {product.price.toFixed(2)}
-            </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Rating value={product.rating.rate} precision={0.5} readOnly />
-              <Typography variant="body2" sx={{ ml: 1 }}>
-                ({product.rating.count} avaliações)
+            <Box sx={{ mb: 3 }}>
+              <Rating
+                value={product.rating.rate}
+                precision={0.5}
+                readOnly
+                sx={{ mb: 1 }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                {product.rating.count} avaliações
               </Typography>
             </Box>
 
-            <Typography variant="body1" paragraph>
-              {product.description}
+            <Chip
+              label={product.category}
+              sx={{
+                mb: 3,
+                backgroundColor: 'primary.light',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                },
+              }}
+            />
+
+            <Typography
+              variant="h3"
+              color="primary"
+              sx={{ fontWeight: 700, mb: 3 }}
+            >
+              R$ {product.price.toFixed(2)}
             </Typography>
 
-            <Typography variant="subtitle1" gutterBottom>
-              Categoria: {product.category}
+            <Divider sx={{ my: 3 }} />
+
+            <Typography variant="h6" gutterBottom>
+              Descrição
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ mb: 4 }}
+            >
+              {product.description}
             </Typography>
 
             <Button
               variant="contained"
               size="large"
+              fullWidth
+              startIcon={<ShoppingCart />}
               onClick={handleAddToCart}
-              sx={{ mt: 2 }}
+              sx={{
+                py: 1.5,
+                backgroundColor: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+              }}
             >
               Adicionar ao Carrinho
             </Button>
