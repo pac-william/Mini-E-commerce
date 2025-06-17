@@ -1,25 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { CartProvider } from './contexts/CartContext';
+import { Navbar } from './components/Navbar';
+import { ProductList } from './pages/ProductList';
+import { ProductDetails } from './pages/ProductDetails';
+import { Cart } from './pages/Cart';
+import theme from './theme';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <CartProvider>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<ProductList />} />
+            <Route path="/produto/:id" element={<ProductDetails />} />
+            <Route path="/carrinho" element={<Cart />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
+    </ThemeProvider>
   );
 }
 
